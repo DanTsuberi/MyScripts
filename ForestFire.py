@@ -79,10 +79,12 @@ def animate_forest(forest, steps=50):
 
 ##################################################################################
 #running the model#
+forest_model = ForestFire(size=50,p_fire=0.85) # size of grid and probability to ignite neighbor
 
-forest_model = ForestFire(size=50,p_fire=0.85)
-forest_model.ignite(fire_spots=1)
-simulation_steps = forest_model.simulate(steps=50)
+forest_model.ignite(fire_spots=1) #number of initial fires
+
+simulation_steps = forest_model.simulate(steps=50) # number of steps to calculate
+
 print(f"Number of steps: {len(simulation_steps)}") ##sanity check
 
 ###################################################################################
