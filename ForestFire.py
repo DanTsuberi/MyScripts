@@ -66,6 +66,16 @@ class ForestFire:
             self.spread_fire()
         return grids
 
+    def count_trees(self):
+        """Count the number of trees in the grid."""
+        return np.sum(self.grid == tree)
+
+    def count_burned_pixels(self, accumulated_burned):
+        """Accumulate the count of burned pixels (including charred1 and charred2)."""
+        burned_pixels = np.sum(np.isin(self.grid, [burn, charred1, charred2])) 
+        accumulated_burned += burned_pixels  # Accumulate burned pixels across all steps
+        return accumulated_burned
+
 ##################################################################################
 #running the model#
 forest_model = ForestFire(size=50,p_fire=0.85) # size of grid and probability to ignite neighbor
@@ -107,4 +117,39 @@ for step in range(len(simulation_steps)):
     plt.axis('off')  # Turn off the axes
     plt.savefig(f"figures/ForestFire/step_{step}.png", bbox_inches='tight')
     plt.close() 
+##################################################################################
+# Produce a graph of burned and tress
+tree_counts = []
+burned_counts = []
+accumulated_burned_counts = []
 
+# Create an array (mask) to track pixels that were ever burned
+cumulative_burned_mask = np.zeros((forest_model.size, forest_model.size), dtype=bool)
+# For each snapshot in the simulation:
+for grid in simulation_steps:
+    # Count trees in the current grid
+    tree_counts.append(np.sum(grid == tree))
+    
+    # Create a mask for pixels that are currently burned or charred
+    current_burned_mask = np.isin(grid, [burn, charred1, charred2])
+    # Update cumulative mask: once burned, always marked as burned
+    cumulative_burned_mask = np.logical_or(cumulative_burned_mask, current_burned_mask)
+    # Count total burned pixels accumulated so far
+    accumulated_burned_counts.append(np.sum(cumulative_burned_mask))
+
+# Plot the results
+plt.figure(figsize=(10, 6))
+
+# Plot total trees over time
+plt.plot(range(len(simulation_steps)), tree_counts, color='green', label='Remaining Trees', linestyle='-', linewidth=2)
+
+# Plot total burned pixels over time
+plt.plot(range(len(simulation_steps)), accumulated_burned_counts, color='red', label='Burned Pixels', linestyle='-', linewidth=2)
+
+plt.xlabel("Steps")
+plt.ylabel("Pixel Count")
+plt.title("Total Trees and Burned Pixels Over Time")
+plt.legend()
+plt.grid(True)
+
+plt.show()
