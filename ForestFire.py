@@ -40,13 +40,12 @@ class ForestFire:
                     for di, dj in [(-1,0),(1,0),(0,-1), (0,1)]:
                         neighbor_x, neighbor_y = i + di, j + dj
                         # Skip out-of-bound neighbors
-                        if neighbor_x < 0 or neighbor_x >= self.size or neighbor_y < 0 or neighbor_y >= self.size:
-                            continue  # Skip this iteration if the neighbor is out of bounds
-                            
-                        if self.grid[neighbor_x, neighbor_y] == tree:
-                            if np.random.rand() < self.p_fire:
-                                new_grid[neighbor_x, neighbor_y] = burn
-                                #print(f"Fire spread to ({neighbor_x}, {neighbor_y})")  # Print where fire spreads
+                       
+                       if 0 <= neighbor_x < self.size and 0 <= neighbor_y < self.size:    
+                            if self.grid[neighbor_x, neighbor_y] == tree:
+                                if np.random.rand() < self.p_fire:
+                                    new_grid[neighbor_x, neighbor_y] = burn
+                                    #print(f"Fire spread to ({neighbor_x}, {neighbor_y})")  # Print where fire spreads
 
     
         self.grid = new_grid
@@ -91,6 +90,11 @@ print(f"Number of steps: {len(simulation_steps)}") ##sanity check
 # Visualize one of the steps
 # Choose step number 
 viz_step = 19
+
+if viz_step_user >= len(simulation_steps):
+    viz_step = len(simulation_steps) - 1
+else:
+    viz_step = viz_step_user
 
 plt.imshow(simulation_steps[viz_step], cmap='viridis', vmin=0, vmax=2)
 plt.title(f"Step {viz_step} : Fire Spread Visualization")
