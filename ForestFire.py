@@ -4,8 +4,9 @@ import matplotlib.pyplot as plt
 #Defining 
 empty = 0
 tree = 1
-burn = 2
-
+burn = 4
+charred1 = 3
+charred2 = 2
 
 # Functions for Forest fire
 class ForestFire:
@@ -46,7 +47,12 @@ class ForestFire:
                                 if np.random.rand() < self.p_fire:
                                     new_grid[neighbor_x, neighbor_y] = burn
                                     #print(f"Fire spread to ({neighbor_x}, {neighbor_y})")  # Print where fire spreads
+                    
+                       elif self.grid[i, j] == charred1: #intermidate state 1
+                           new_grid[i, j] = charred2  
 
+                       elif self.grid[i, j] == charred2: #intermidate state 2
+                           new_grid[i, j] = empty  
     
         self.grid = new_grid
         #print(self.grid)
@@ -59,22 +65,6 @@ class ForestFire:
             grids.append(self.grid.copy())
             self.spread_fire()
         return grids
-    
-
-def animate_forest(forest, steps=50):
-    """Animates the spread of fire in the forest."""
-    fig, ax = plt.subplots()
-
-    def update(frame):
-        #ax.clear()
-        cmap = plt.cm.get_cmap("viridis", 3)
-        ax.imshow(forest[frame], cmap=cmap, vmin=0, vmax=2)
-        ax.set_title(f"Step {frame}")
-        ax.set_xticks([]) 
-        ax.set_yticks([])
-
-    anim = animation.FuncAnimation(fig,update,frames=len(forest), interval= 200)
-    plt.show()
 
 ##################################################################################
 #running the model#
@@ -96,7 +86,13 @@ if viz_step_user >= len(simulation_steps):
 else:
     viz_step = viz_step_user
 
-plt.imshow(simulation_steps[viz_step], cmap='viridis', vmin=0, vmax=2)
+# Define a discrete colormap with four distinct colors
+cmap = mcolors.ListedColormap(["white", "green", "black", "orange", "red"]) 
+
+#Use BoundaryNorm to correctly assign each state to a color
+norm = mcolors.BoundaryNorm([0, 1, 2, 3, 4, 5], cmap.N)
+
+plt.imshow(simulation_steps[viz_step], cmap=cmap, norm=norm)
 plt.title(f"Step {viz_step} : Fire Spread Visualization")
 plt.show()
     
@@ -104,11 +100,11 @@ plt.show()
 # Save steps as seperate images
 
 for step in range(len(simulation_steps)):
-    plt.imshow(simulation_steps[step], cmap="viridis", vmin=0, vmax=2)
+    plt.imshow(simulation_steps[step], cmap=cmap, norm=norm)
     plt.title(f"Step {step}: Fire Spread Visualization")
 
     # Remove axes, ticks, and labels
     plt.axis('off')  # Turn off the axes
-    plt.savefig(f"figures/fire/test/step_{step}.png", bbox_inches='tight', pad_inches=0.1)
+    plt.savefig(f"figures/ForestFire/step_{step}.png", bbox_inches='tight')
     plt.close() 
 
