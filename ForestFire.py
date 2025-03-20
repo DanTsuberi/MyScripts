@@ -88,9 +88,11 @@ print(f"Number of steps: {len(simulation_steps)}") ##sanity check
 
 ###################################################################################
 # Visualize one of the steps
+# Choose step number 
+viz_step = 19
 
-plt.imshow(simulation_steps[19], cmap='viridis', vmin=0, vmax=2)
-plt.title("Step 1: Fire Spread Visualization")
+plt.imshow(simulation_steps[viz_step], cmap='viridis', vmin=0, vmax=2)
+plt.title(f"Step {viz_step} : Fire Spread Visualization")
 plt.show()
     
 ###################################################################################
